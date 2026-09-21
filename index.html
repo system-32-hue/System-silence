@@ -1,91 +1,371 @@
 <!DOCTYPE html>
-
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Silence ™</title>
+    <title>System Silence</title>
 
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-<style>
-    * {
-        box-sizing: border-box;
-    }
+        html {
+            scroll-behavior: smooth;
+        }
 
-    body {
-        margin: 0;
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #080808;
-        color: white;
-        font-family: Arial, sans-serif;
-    }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 50% 20%, rgba(180, 0, 0, 0.22), transparent 35%),
+                radial-gradient(circle at 20% 80%, rgba(90, 0, 0, 0.16), transparent 30%),
+                #050505;
+            color: #fff;
+            font-family: Arial, Helvetica, sans-serif;
+            overflow-x: hidden;
+        }
 
-    .container {
-        text-align: center;
-    }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
 
-    h1 {
-        font-size: 42px;
-        margin-bottom: 10px;
-    }
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 45px;
+            background: rgba(5, 5, 5, 0.72);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            z-index: 10;
+        }
 
-    p {
-        color: #999;
-        margin-bottom: 30px;
-    }
+        .logo {
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
 
-    .install {
-        display: inline-block;
-        padding: 14px 28px;
-        background: #ffffff;
-        color: #000000;
-        text-decoration: none;
-        border-radius: 7px;
-        font-weight: bold;
-        font-size: 16px;
-        transition: 0.15s;
-    }
+        .logo span {
+            color: #ff2020;
+        }
 
-    .install:hover {
-        transform: scale(1.04);
-        background: #dddddd;
-    }
+        .version {
+            padding: 7px 12px;
+            border: 1px solid rgba(255, 40, 40, 0.35);
+            border-radius: 20px;
+            color: #ff6868;
+            background: rgba(255, 0, 0, 0.07);
+            font-size: 12px;
+        }
 
-    .version {
-        margin-top: 20px;
-        color: #666;
-        font-size: 12px;
-    }
-</style>
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 20px 70px;
+            position: relative;
+        }
 
+        .hero-content {
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+            animation: appear 0.8s ease;
+        }
 
+        .badge {
+            display: inline-block;
+            padding: 8px 15px;
+            margin-bottom: 25px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 50, 50, 0.35);
+            background: rgba(255, 0, 0, 0.07);
+            color: #ff5555;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(55px, 9vw, 110px);
+            line-height: 0.95;
+            letter-spacing: -5px;
+            font-weight: 900;
+            text-shadow:
+                0 0 30px rgba(255, 0, 0, 0.15);
+        }
+
+        h1 span {
+            color: #ff2424;
+        }
+
+        .subtitle {
+            max-width: 650px;
+            margin: 30px auto 0;
+            color: #999;
+            font-size: 18px;
+            line-height: 1.7;
+        }
+
+        .install-area {
+            margin-top: 40px;
+        }
+
+        .install-button {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 250px;
+            padding: 17px 30px;
+            border: 1px solid #ff3030;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #ff2929, #a90000);
+            color: white;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow:
+                0 0 30px rgba(255, 0, 0, 0.18),
+                inset 0 1px rgba(255,255,255,0.2);
+            transition: 0.2s ease;
+        }
+
+        .install-button:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 10px 40px rgba(255, 0, 0, 0.3),
+                0 0 60px rgba(255, 0, 0, 0.12);
+        }
+
+        .install-button:active {
+            transform: translateY(0);
+        }
+
+        .download-icon {
+            margin-right: 10px;
+            font-size: 19px;
+        }
+
+        #status {
+            min-height: 20px;
+            margin-top: 18px;
+            color: #777;
+            font-size: 13px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            max-width: 900px;
+            margin: 80px auto 0;
+        }
+
+        .feature {
+            padding: 25px;
+            text-align: left;
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 12px;
+            transition: 0.25s ease;
+        }
+
+        .feature:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,40,40,0.3);
+            background: rgba(255,0,0,0.035);
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 17px;
+            border-radius: 8px;
+            background: rgba(255,0,0,0.09);
+            color: #ff3b3b;
+            font-size: 19px;
+        }
+
+        .feature h3 {
+            margin: 0 0 9px;
+            font-size: 16px;
+        }
+
+        .feature p {
+            margin: 0;
+            color: #777;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .footer {
+            padding: 35px 20px;
+            text-align: center;
+            color: #444;
+            font-size: 12px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .glow {
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            background: #ff0000;
+            opacity: 0.04;
+            filter: blur(120px);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .glow.one {
+            top: 10%;
+            left: 5%;
+        }
+
+        .glow.two {
+            right: 5%;
+            bottom: 10%;
+        }
+
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .header {
+                padding: 0 20px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                letter-spacing: -3px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
+    <header class="header">
+        <div class="logo">
+            SYSTEM <span>SILENCE</span>
+        </div>
 
-<div class="container">
-    <h1>System Silence</h1>
+        <div class="version">
+            WINDOWS
+        </div>
+    </header>
 
-    <p>Private browser for Windows,simple and compact</p>
+    <div class="glow one"></div>
+    <div class="glow two"></div>
 
-    <a
-        class="install"
-        href="https://www.dropbox.com/scl/fo/npspazwajhgjwvf7wlvlg/AMwWo4T2UmPf2TKsTmLa8eY?rlkey=x8evodvruf3yudezbz2445lkj&st=174acqli&dl=1"
-        target="_blank"
-        rel="noopener noreferrer"
-    >
-        Install System Silence
-    </a>
+    <main class="hero">
+        <div class="hero-content">
 
-    <div class="version">
-        System Silence
-    </div>
-</div>
+            <div class="badge">
+                Private browser
+            </div>
 
+            <h1>
+                System <span>Silence</span>
+            </h1>
+
+            <p class="subtitle">
+                Um navegador focado em privacidade, controle e personalização.
+                Tenha uma experiência web sob o seu controle.
+            </p>
+
+            <div class="install-area">
+                <button class="install-button" id="install">
+                    <span class="download-icon">↓</span>
+                    Install System Silence
+                </button>
+
+                <div id="status"></div>
+            </div>
+
+            <section class="features">
+
+                <div class="feature">
+                    <div class="feature-icon">◈</div>
+                    <h3>Privacy</h3>
+                    <p>
+                        Navegação projetada para dar mais controle sobre seus dados.
+                    </p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">⌘</div>
+                    <h3>Plugins</h3>
+                    <p>
+                        Personalize o navegador usando plugins próprios.
+                    </p>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">⚙</div>
+                    <h3>Control</h3>
+                    <p>
+                        Modifique sua experiência web de acordo com suas necessidades.
+                    </p>
+                </div>
+
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="footer">
+        System Silence · Windows
+    </footer>
+
+    <script>
+        const DROPBOX_FOLDER =
+            "https://www.dropbox.com/scl/fo/npspazwajhgjwvf7wlvlg/AMwWo4T2UmPf2TKsTmLa8eY?rlkey=x8evodvruf3yudezbz2445lkj&st=174acqli&dl=0";
+
+        document.getElementById("install").addEventListener("click", function () {
+            const status = document.getElementById("status");
+
+            status.textContent = "Abrindo download...";
+
+            window.location.href = DROPBOX_FOLDER;
+        });
+    </script>
 
 </body>
 </html>
