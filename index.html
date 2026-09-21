@@ -47,7 +47,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 45px;
-            background: rgba(5, 5, 5, 0.72);
+            background: rgba(5, 5, 5, 0.78);
             backdrop-filter: blur(15px);
             border-bottom: 1px solid rgba(255,255,255,0.07);
             z-index: 10;
@@ -57,19 +57,45 @@
             font-size: 21px;
             font-weight: 800;
             letter-spacing: 2px;
+            white-space: nowrap;
         }
 
         .logo span {
             color: #ff2020;
         }
 
-        .version {
-            padding: 7px 12px;
-            border: 1px solid rgba(255, 40, 40, 0.35);
-            border-radius: 20px;
-            color: #ff6868;
-            background: rgba(255, 0, 0, 0.07);
+        .platforms {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.025);
+        }
+
+        .platform {
+            padding: 8px 14px;
+            border: 1px solid transparent;
+            border-radius: 7px;
+            background: transparent;
+            color: #777;
             font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .platform:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .platform.active {
+            color: #fff;
+            background: rgba(255, 25, 25, 0.12);
+            border-color: rgba(255, 45, 45, 0.3);
+            box-shadow: 0 0 18px rgba(255, 0, 0, 0.08);
         }
 
         .hero {
@@ -107,8 +133,7 @@
             line-height: 0.95;
             letter-spacing: -5px;
             font-weight: 900;
-            text-shadow:
-                0 0 30px rgba(255, 0, 0, 0.15);
+            text-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
         }
 
         h1 span {
@@ -132,7 +157,7 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 250px;
+            min-width: 270px;
             padding: 17px 30px;
             border: 1px solid #ff3030;
             border-radius: 9px;
@@ -261,7 +286,20 @@
 
         @media (max-width: 700px) {
             .header {
-                padding: 0 20px;
+                padding: 0 15px;
+            }
+
+            .logo {
+                font-size: 16px;
+            }
+
+            .platforms {
+                gap: 2px;
+            }
+
+            .platform {
+                padding: 7px 8px;
+                font-size: 10px;
             }
 
             .features {
@@ -282,28 +320,34 @@
 <body>
 
     <header class="header">
+
         <div class="logo">
             SYSTEM <span>SILENCE</span>
         </div>
 
-        <div class="version">
-            WINDOWS
+        <div class="platforms">
+
+            <button class="platform active" data-platform="windows">
+                Windows
+            </button>
+
+            <button class="platform" data-platform="linux">
+                Linux
+            </button>
+
+            <button class="platform" data-platform="macos">
+                macOS
+            </button>
+
         </div>
 
-        <div class="version">
-            Linux
-        </div>
-
-        <div class="version">
-            MacOs
-        </div>
-        
     </header>
 
     <div class="glow one"></div>
     <div class="glow two"></div>
 
     <main class="hero">
+
         <div class="hero-content">
 
             <div class="badge">
@@ -320,12 +364,14 @@
             </p>
 
             <div class="install-area">
+
                 <button class="install-button" id="install">
                     <span class="download-icon">↓</span>
                     Install System Silence
                 </button>
 
                 <div id="status"></div>
+
             </div>
 
             <section class="features">
@@ -339,7 +385,7 @@
                 </div>
 
                 <div class="feature">
-                    <div class="feature-icon">🛠</div>
+                    <div class="feature-icon">+</div>
                     <h3>Plugins</h3>
                     <p>
                         Personalize o navegador usando plugins próprios.
@@ -357,20 +403,49 @@
             </section>
 
         </div>
+
     </main>
 
     <footer class="footer">
-        System Silence · Windows · Linux · MacOs 📎
+        System Silence · Windows · Linux · macOS
     </footer>
 
     <script>
         const DROPBOX_FOLDER =
             "https://www.dropbox.com/scl/fo/npspazwajhgjwvf7wlvlg/AMwWo4T2UmPf2TKsTmLa8eY?rlkey=x8evodvruf3yudezbz2445lkj&st=174acqli&dl=1";
 
-        document.getElementById("install").addEventListener("click", function () {
-            const status = document.getElementById("status");
+        const platforms = document.querySelectorAll(".platform");
 
-            status.textContent = "Abrindo download...";
+        platforms.forEach(function (button) {
+            button.addEventListener("click", function () {
+                platforms.forEach(function (item) {
+                    item.classList.remove("active");
+                });
+
+                button.classList.add("active");
+
+                const platform = button.dataset.platform;
+
+                if (platform === "windows") {
+                    document.getElementById("status").textContent =
+                        "System Silence para Windows selecionado.";
+                }
+
+                if (platform === "linux") {
+                    document.getElementById("status").textContent =
+                        "System Silence para Linux selecionado.";
+                }
+
+                if (platform === "macos") {
+                    document.getElementById("status").textContent =
+                        "System Silence para macOS selecionado.";
+                }
+            });
+        });
+
+        document.getElementById("install").addEventListener("click", function () {
+            document.getElementById("status").textContent =
+                "Abrindo download...";
 
             window.location.href = DROPBOX_FOLDER;
         });
