@@ -1,455 +1,496 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Silence</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+            radial-gradient(circle at 50% 20%, rgba(180, 0, 0, 0.22), transparent 35%),
+            radial-gradient(circle at 20% 80%, rgba(90, 0, 0, 0.16), transparent 30%),
+            #050505;
+        color: #fff;
+        font-family: Arial, Helvetica, sans-serif;
+        overflow-x: hidden;
+    }
+
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background-image:
+            linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+        background-size: 40px 40px;
+    }
+
+    .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 45px;
+        background: rgba(5, 5, 5, 0.78);
+        backdrop-filter: blur(15px);
+        border-bottom: 1px solid rgba(255,255,255,0.07);
+        z-index: 10;
+    }
+
+    .logo {
+        font-size: 21px;
+        font-weight: 800;
+        letter-spacing: 2px;
+        white-space: nowrap;
+    }
+
+    .logo span {
+        color: #ff2020;
+    }
+
+    .platforms {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px;
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 10px;
+        background: rgba(255,255,255,0.025);
+    }
+
+    .platform {
+        padding: 8px 14px;
+        border: 1px solid transparent;
+        border-radius: 7px;
+        background: transparent;
+        color: #777;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .platform:hover {
+        color: #fff;
+        background: rgba(255,255,255,0.05);
+    }
+
+    .platform.active {
+        color: #fff;
+        background: rgba(255, 25, 25, 0.12);
+        border-color: rgba(255, 45, 45, 0.3);
+        box-shadow: 0 0 18px rgba(255, 0, 0, 0.08);
+    }
+
+    .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 120px 20px 70px;
+        position: relative;
+    }
+
+    .hero-content {
+        width: 100%;
+        max-width: 900px;
+        text-align: center;
+        animation: appear 0.8s ease;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 8px 15px;
+        margin-bottom: 25px;
+        border-radius: 30px;
+        border: 1px solid rgba(255, 50, 50, 0.35);
+        background: rgba(255, 0, 0, 0.07);
+        color: #ff5555;
+        font-size: 12px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    h1 {
+        margin: 0;
+        font-size: clamp(55px, 9vw, 110px);
+        line-height: 0.95;
+        letter-spacing: -5px;
+        font-weight: 900;
+        text-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
+    }
+
+    h1 span {
+        color: #ff2424;
+    }
+
+    .subtitle {
+        max-width: 650px;
+        margin: 30px auto 0;
+        color: #999;
+        font-size: 18px;
+        line-height: 1.7;
+    }
+
+    .install-area {
+        margin-top: 40px;
+    }
+
+    .install-button {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 270px;
+        padding: 17px 30px;
+        border: 1px solid #ff3030;
+        border-radius: 9px;
+        background: linear-gradient(135deg, #ff2929, #a90000);
+        color: white;
+        font-size: 16px;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow:
+            0 0 30px rgba(255, 0, 0, 0.18),
+            inset 0 1px rgba(255,255,255,0.2);
+        transition: 0.2s ease;
+    }
+
+    .install-button:hover {
+        transform: translateY(-3px);
+        box-shadow:
+            0 10px 40px rgba(255, 0, 0, 0.3),
+            0 0 60px rgba(255, 0, 0, 0.12);
+    }
+
+    .install-button:active {
+        transform: translateY(0);
+    }
+
+    .download-icon {
+        margin-right: 10px;
+        font-size: 19px;
+    }
+
+    #status {
+        min-height: 20px;
+        margin-top: 18px;
+        color: #777;
+        font-size: 13px;
+    }
+
+    .features {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        max-width: 900px;
+        margin: 80px auto 0;
+    }
+
+    .feature {
+        padding: 25px;
+        text-align: left;
+        background: rgba(255,255,255,0.025);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 12px;
+        transition: 0.25s ease;
+    }
+
+    .feature:hover {
+        transform: translateY(-5px);
+        border-color: rgba(255,40,40,0.3);
+        background: rgba(255,0,0,0.035);
+    }
+
+    .feature-icon {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 17px;
+        border-radius: 8px;
+        background: rgba(255,0,0,0.09);
+        color: #ff3b3b;
+        font-size: 19px;
+    }
+
+    .feature h3 {
+        margin: 0 0 9px;
+        font-size: 16px;
+    }
+
+    .feature p {
+        margin: 0;
+        color: #777;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .footer {
+        padding: 35px 20px;
+        text-align: center;
+        color: #444;
+        font-size: 12px;
+        border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .plugins-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 18px;
+        padding: 11px 20px;
+        border: 1px solid rgba(255, 45, 45, 0.45);
+        border-radius: 8px;
+        background: rgba(255, 0, 0, 0.08);
+        color: #ff5555;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+        transition: 0.2s ease;
+    }
+
+    .plugins-button:hover {
+        color: #fff;
+        background: rgba(255, 0, 0, 0.18);
+        border-color: #ff3030;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(255, 0, 0, 0.15);
+    }
+
+    .glow {
+        position: absolute;
+        width: 350px;
+        height: 350px;
+        background: #ff0000;
+        opacity: 0.04;
+        filter: blur(120px);
+        border-radius: 50%;
+        pointer-events: none;
+    }
+
+    .glow.one {
+        top: 10%;
+        left: 5%;
+    }
+
+    .glow.two {
+        right: 5%;
+        bottom: 10%;
+    }
+
+    @keyframes appear {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
         }
 
-        html {
-            scroll-behavior: smooth;
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
+    }
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background:
-                radial-gradient(circle at 50% 20%, rgba(180, 0, 0, 0.22), transparent 35%),
-                radial-gradient(circle at 20% 80%, rgba(90, 0, 0, 0.16), transparent 30%),
-                #050505;
-            color: #fff;
-            font-family: Arial, Helvetica, sans-serif;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            background-image:
-                linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
-            background-size: 40px 40px;
-        }
-
+    @media (max-width: 700px) {
         .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 45px;
-            background: rgba(5, 5, 5, 0.78);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(255,255,255,0.07);
-            z-index: 10;
+            padding: 0 15px;
         }
 
         .logo {
-            font-size: 21px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            white-space: nowrap;
-        }
-
-        .logo span {
-            color: #ff2020;
+            font-size: 16px;
         }
 
         .platforms {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 5px;
-            border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 10px;
-            background: rgba(255,255,255,0.025);
+            gap: 2px;
         }
 
         .platform {
-            padding: 8px 14px;
-            border: 1px solid transparent;
-            border-radius: 7px;
-            background: transparent;
-            color: #777;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s ease;
-        }
-
-        .platform:hover {
-            color: #fff;
-            background: rgba(255,255,255,0.05);
-        }
-
-        .platform.active {
-            color: #fff;
-            background: rgba(255, 25, 25, 0.12);
-            border-color: rgba(255, 45, 45, 0.3);
-            box-shadow: 0 0 18px rgba(255, 0, 0, 0.08);
-        }
-
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 120px 20px 70px;
-            position: relative;
-        }
-
-        .hero-content {
-            width: 100%;
-            max-width: 900px;
-            text-align: center;
-            animation: appear 0.8s ease;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 8px 15px;
-            margin-bottom: 25px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 50, 50, 0.35);
-            background: rgba(255, 0, 0, 0.07);
-            color: #ff5555;
-            font-size: 12px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        h1 {
-            margin: 0;
-            font-size: clamp(55px, 9vw, 110px);
-            line-height: 0.95;
-            letter-spacing: -5px;
-            font-weight: 900;
-            text-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
-        }
-
-        h1 span {
-            color: #ff2424;
-        }
-
-        .subtitle {
-            max-width: 650px;
-            margin: 30px auto 0;
-            color: #999;
-            font-size: 18px;
-            line-height: 1.7;
-        }
-
-        .install-area {
-            margin-top: 40px;
-        }
-
-        .install-button {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 270px;
-            padding: 17px 30px;
-            border: 1px solid #ff3030;
-            border-radius: 9px;
-            background: linear-gradient(135deg, #ff2929, #a90000);
-            color: white;
-            font-size: 16px;
-            font-weight: 800;
-            cursor: pointer;
-            box-shadow:
-                0 0 30px rgba(255, 0, 0, 0.18),
-                inset 0 1px rgba(255,255,255,0.2);
-            transition: 0.2s ease;
-        }
-
-        .install-button:hover {
-            transform: translateY(-3px);
-            box-shadow:
-                0 10px 40px rgba(255, 0, 0, 0.3),
-                0 0 60px rgba(255, 0, 0, 0.12);
-        }
-
-        .install-button:active {
-            transform: translateY(0);
-        }
-
-        .download-icon {
-            margin-right: 10px;
-            font-size: 19px;
-        }
-
-        #status {
-            min-height: 20px;
-            margin-top: 18px;
-            color: #777;
-            font-size: 13px;
+            padding: 7px 8px;
+            font-size: 10px;
         }
 
         .features {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            max-width: 900px;
-            margin: 80px auto 0;
+            grid-template-columns: 1fr;
         }
 
-        .feature {
-            padding: 25px;
-            text-align: left;
-            background: rgba(255,255,255,0.025);
-            border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 12px;
-            transition: 0.25s ease;
+        h1 {
+            letter-spacing: -3px;
         }
 
-        .feature:hover {
-            transform: translateY(-5px);
-            border-color: rgba(255,40,40,0.3);
-            background: rgba(255,0,0,0.035);
-        }
-
-        .feature-icon {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 17px;
-            border-radius: 8px;
-            background: rgba(255,0,0,0.09);
-            color: #ff3b3b;
-            font-size: 19px;
-        }
-
-        .feature h3 {
-            margin: 0 0 9px;
+        .subtitle {
             font-size: 16px;
         }
+    }
+</style>
 
-        .feature p {
-            margin: 0;
-            color: #777;
-            font-size: 13px;
-            line-height: 1.6;
-        }
 
-        .footer {
-            padding: 35px 20px;
-            text-align: center;
-            color: #444;
-            font-size: 12px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .glow {
-            position: absolute;
-            width: 350px;
-            height: 350px;
-            background: #ff0000;
-            opacity: 0.04;
-            filter: blur(120px);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        .glow.one {
-            top: 10%;
-            left: 5%;
-        }
-
-        .glow.two {
-            right: 5%;
-            bottom: 10%;
-        }
-
-        @keyframes appear {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media (max-width: 700px) {
-            .header {
-                padding: 0 15px;
-            }
-
-            .logo {
-                font-size: 16px;
-            }
-
-            .platforms {
-                gap: 2px;
-            }
-
-            .platform {
-                padding: 7px 8px;
-                font-size: 10px;
-            }
-
-            .features {
-                grid-template-columns: 1fr;
-            }
-
-            h1 {
-                letter-spacing: -3px;
-            }
-
-            .subtitle {
-                font-size: 16px;
-            }
-        }
-    </style>
 </head>
 
 <body>
 
-    <header class="header">
 
-        <div class="logo">
-            SYSTEM <span>SILENCE</span>
+<header class="header">
+
+    <div class="logo">
+        SYSTEM <span>SILENCE</span>
+    </div>
+
+    <div class="platforms">
+
+        <button class="platform active" data-platform="windows">
+            Windows
+        </button>
+
+        <button class="platform" data-platform="linux">
+            Linux
+        </button>
+
+        <button class="platform" data-platform="macos">
+            macOS
+        </button>
+
+    </div>
+
+</header>
+
+<div class="glow one"></div>
+<div class="glow two"></div>
+
+<main class="hero">
+
+    <div class="hero-content">
+
+        <div class="badge">
+            Private browser
         </div>
 
-        <div class="platforms">
+        <h1>
+            System <span>Silence</span>
+        </h1>
 
-            <button class="platform active" data-platform="windows">
-                Windows
+        <p class="subtitle">
+            Um navegador focado em privacidade, controle e personalização.
+            Tenha uma experiência web sob o seu controle.
+        </p>
+
+        <div class="install-area">
+
+            <button class="install-button" id="install">
+                <span class="download-icon">↓</span>
+                Install System Silence
             </button>
 
-            <button class="platform" data-platform="linux">
-                Linux
-            </button>
-
-            <button class="platform" data-platform="macos">
-                macOS
-            </button>
+            <div id="status"></div>
 
         </div>
 
-    </header>
+        <section class="features">
 
-    <div class="glow one"></div>
-    <div class="glow two"></div>
-
-    <main class="hero">
-
-        <div class="hero-content">
-
-            <div class="badge">
-                Private browser
+            <div class="feature">
+                <div class="feature-icon">🌐︎</div>
+                <h3>Privacy</h3>
+                <p>
+                    Navegação projetada para dar mais controle sobre seus dados.
+                </p>
             </div>
 
-            <h1>
-                System <span>Silence</span>
-            </h1>
-
-            <p class="subtitle">
-                Um navegador focado em privacidade, controle e personalização.
-                Tenha uma experiência web sob o seu controle.
-            </p>
-
-            <div class="install-area">
-
-                <button class="install-button" id="install">
-                    <span class="download-icon">↓</span>
-                    Install System Silence
-                </button>
-
-                <div id="status"></div>
-
+            <div class="feature">
+                <div class="feature-icon">🛠</div>
+                <h3>Plugins</h3>
+                <p>
+                    Personalize o navegador usando plugins próprios.
+                </p>
             </div>
 
-            <section class="features">
+            <div class="feature">
+                <div class="feature-icon">ⓘ</div>
+                <h3>Control</h3>
+                <p>
+                    Modifique sua experiência web de acordo com suas necessidades.
+                </p>
+            </div>
 
-                <div class="feature">
-                    <div class="feature-icon">🌐︎</div>
-                    <h3>Privacy</h3>
-                    <p>
-                        Navegação projetada para dar mais controle sobre seus dados.
-                    </p>
-                </div>
+        </section>
 
-                <div class="feature">
-                    <div class="feature-icon">🛠</div>
-                    <h3>Plugins</h3>
-                    <p>
-                        Personalize o navegador usando plugins próprios.
-                    </p>
-                </div>
+    </div>
 
-                <div class="feature">
-                    <div class="feature-icon">ⓘ</div>
-                    <h3>Control</h3>
-                    <p>
-                        Modifique sua experiência web de acordo com suas necessidades.
-                    </p>
-                </div>
+</main>
 
-            </section>
+<footer class="footer">
+    System Silence · Windows · Linux · macOS
 
-        </div>
+    <br>
 
-    </main>
+    <a
+        class="plugins-button"
+        href="https://system-32-hue.github.io/plugins-system-silence/"
+        target="_blank"
+        rel="noopener noreferrer"
+    >
+        Official Plugin Tab
+    </a>
+</footer>
 
-    <footer class="footer">
-        System Silence · Windows · Linux · macOS
-    </footer>
+<script>
+    const DROPBOX_FOLDER =
+        "https://www.dropbox.com/scl/fo/npspazwajhgjwvf7wlvlg/AMwWo4T2UmPf2TKsTmLa8eY?rlkey=x8evodvruf3yudezbz2445lkj&st=174acqli&dl=1";
 
-    <script>
-        const DROPBOX_FOLDER =
-            "https://www.dropbox.com/scl/fo/npspazwajhgjwvf7wlvlg/AMwWo4T2UmPf2TKsTmLa8eY?rlkey=x8evodvruf3yudezbz2445lkj&st=174acqli&dl=1";
+    const platforms = document.querySelectorAll(".platform");
 
-        const platforms = document.querySelectorAll(".platform");
-
-        platforms.forEach(function (button) {
-            button.addEventListener("click", function () {
-                platforms.forEach(function (item) {
-                    item.classList.remove("active");
-                });
-
-                button.classList.add("active");
-
-                const platform = button.dataset.platform;
-
-                if (platform === "windows") {
-                    document.getElementById("status").textContent =
-                        "System Silence para Windows selecionado.";
-                }
-
-                if (platform === "linux") {
-                    document.getElementById("status").textContent =
-                        "System Silence para Linux selecionado.";
-                }
-
-                if (platform === "macos") {
-                    document.getElementById("status").textContent =
-                        "System Silence para macOS selecionado.";
-                }
+    platforms.forEach(function (button) {
+        button.addEventListener("click", function () {
+            platforms.forEach(function (item) {
+                item.classList.remove("active");
             });
-        });
 
-        document.getElementById("install").addEventListener("click", function () {
-            document.getElementById("status").textContent =
-                "Abrindo download...";
+            button.classList.add("active");
 
-            window.location.href = DROPBOX_FOLDER;
+            const platform = button.dataset.platform;
+
+            if (platform === "windows") {
+                document.getElementById("status").textContent =
+                    "System Silence para Windows selecionado.";
+            }
+
+            if (platform === "linux") {
+                document.getElementById("status").textContent =
+                    "System Silence para Linux selecionado.";
+            }
+
+            if (platform === "macos") {
+                document.getElementById("status").textContent =
+                    "System Silence para macOS selecionado.";
+            }
         });
-    </script>
-    our official plugin tab: https://system-32-hue.github.io/plugins-system-silence/
+    });
+
+    document.getElementById("install").addEventListener("click", function () {
+        document.getElementById("status").textContent =
+            "Abrindo download...";
+
+        window.location.href = DROPBOX_FOLDER;
+    });
+</script>
+
+
 </body>
 </html>
